@@ -1,11 +1,79 @@
 [project]
 name = "comfyui-mcp-server"
 version = "0.1.0"
-description = "Add your description here"
+description = "ComfyUI MCP Server for generative robotics and Blender integration"
 readme = "README.md"
 requires-python = ">=3.12"
+authors = [
+    {name = "elasticdotventures", email = "noreply@elasticdotventures.com"}
+]
+keywords = ["mcp", "comfyui", "blender", "robotics", "generative"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Multimedia :: Graphics :: 3D Modeling",
+]
 dependencies = [
     "mcp[cli]>=1.6.0",
-    "python-dotenv>=1.1.0",
+    "python-dotenv>=1.1.0", 
     "websocket-client>=1.8.0",
 ]
+
+[project.optional-dependencies]
+blender = [
+    "bpy>=4.0.0",
+    "blend-my-bot>=0.1.0",
+]
+robotics = [
+    "urdfpy>=0.0.22",
+    "trimesh>=4.0.0",
+    "scipy>=1.11.0",
+]
+simulation = [
+    "gymnasium[all]>=0.29.0",
+    "mujoco>=3.0.0",
+    "pybullet>=3.2.5",
+]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+    "mypy>=1.5.0",
+]
+all = [
+    "comfyui-mcp-server[blender,robotics,simulation,dev]"
+]
+
+[project.urls]
+Homepage = "https://github.com/elasticdotventures/comfyui-mcp-server"
+Repository = "https://github.com/elasticdotventures/comfyui-mcp-server"
+Issues = "https://github.com/elasticdotventures/comfyui-mcp-server/issues"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0", 
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+    "mypy>=1.5.0",
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
+[tool.black]
+line-length = 88
+target-version = ['py312']
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
