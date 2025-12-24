@@ -61,3 +61,24 @@ dev:
 # Run MCP server inspector
 inspect:
     uv run --with mcp --with websocket-client --with python-dotenv mcp dev src/server.py --inspect
+
+# Test shared workspace - watch in browser at http://sm3lly.lan:30188
+test-shared-workspace:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    echo "🚀 Testing shared workspace capability"
+    echo "👁️  Open http://sm3lly.lan:30188 in your browser to watch!"
+    echo ""
+    uv run --with websocket-client --with python-dotenv --with Pillow \
+        python test_shared_workspace.py
+
+# Preview landmarks with AI labeling (requires custom nodes)
+test-landmark-preview:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    source src/.env
+    echo "🔍 Running landmark preview workflow"
+    echo "👁️  Watch at: http://$COMFYUI_HOST:$COMFYUI_PORT"
+    echo ""
+    echo "This will execute the landmark_preview.json workflow"
+    echo "showing AI-detected keypoints in real-time in your browser."
