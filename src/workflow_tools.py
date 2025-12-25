@@ -10,9 +10,13 @@ from typing import Any, Dict, List, Optional
 
 from mcp.server.fastmcp import FastMCP
 from workflow_manager import Workflow, WorkflowSession
+from mcp_logger import get_logger
 
 # Global session for workflow management
 _session = WorkflowSession()
+
+# Global logger
+_log = get_logger()
 
 
 def register_workflow_tools(mcp: FastMCP) -> None:
@@ -36,6 +40,14 @@ def register_workflow_tools(mcp: FastMCP) -> None:
             Workflow ID and metadata
         """
         workflow_id = _session.create_workflow(name, description)
+
+        _log.info(
+            "workflow_create",
+            f"Created workflow '{name}'",
+            details={"description": description},
+            workflow_id=workflow_id
+        )
+
         return {
             "workflow_id": workflow_id,
             "name": name,
@@ -205,6 +217,13 @@ def register_workflow_tools(mcp: FastMCP) -> None:
             widgets_values=params or []
         )
 
+        _log.info(
+            "workflow_add_node",
+            f"Added node {node_id}: {node_type}",
+            details={"pos": workflow.nodes[node_id].pos, "num_params": len(params or [])},
+            workflow_id=workflow.id
+        )
+
         return {
             "node_id": node_id,
             "node_type": node_type,
@@ -347,12 +366,26 @@ def register_workflow_tools(mcp: FastMCP) -> None:
         )
 
         if link_id:
+            _log.info(
+                "workflow_connect_nodes",
+                f"Connected nodes {from_node_id}:{from_slot} → {to_node_id}:{to_slot}",
+                details={"link_id": link_id, "type": data_type},
+                workflow_id=workflow.id
+            )
+
             return {
                 "link_id": link_id,
                 "from_node": from_node_id,
                 "to_node": to_node_id,
                 "type": data_type
             }
+
+        _log.error(
+            "workflow_connect_nodes",
+            f"Failed to connect {from_node_id} → {to_node_id}",
+            details={"from_slot": from_slot, "to_slot": to_slot, "type": data_type},
+            workflow_id=workflow.id
+        )
         return {"error": "Connection failed (check node IDs and slots)"}
 
     @mcp.tool()
