@@ -11,6 +11,13 @@ load_dotenv()
 
 mcp = FastMCP("comfyui")
 
+# Import workflow collaboration tools
+try:
+    from workflow_tools import register_workflow_tools
+    WORKFLOW_TOOLS_AVAILABLE = True
+except ImportError:
+    WORKFLOW_TOOLS_AVAILABLE = False
+
 @mcp.tool()
 async def text_to_image(prompt: str, seed: int, steps: int, cfg: float, denoise: float) -> Any:
     """Generate an image from a prompt.
@@ -75,6 +82,10 @@ async def run_workflow_from_json(json_data: dict) -> Any:
     )
     images = await comfy.process_workflow(workflow, {}, return_url=os.environ.get("RETURN_URL", "true").lower() == "true")
     return images
+
+# Register dynamic workflow collaboration tools
+if WORKFLOW_TOOLS_AVAILABLE:
+    register_workflow_tools(mcp)
 
 if __name__ == "__main__":
     mcp.run(transport=os.environ.get("MCP_TRANSPORT", "stdio"))
